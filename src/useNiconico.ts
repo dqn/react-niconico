@@ -7,6 +7,7 @@ const lineWidth = 4;
 type Comment = {
   text: string;
   timestamp: number;
+  rowNumber: number;
 };
 
 export function useNiconico(): [
@@ -20,6 +21,19 @@ export function useNiconico(): [
     },
   });
 
+  const calcCommentX = (
+    ctx: CanvasRenderingContext2D,
+    comment: Pick<Comment, "text" | "timestamp">,
+    timestamp: number,
+  ) => {
+    const canvasWidth = ctx.canvas.width;
+    const textWidth = ctx.measureText(comment.text).width;
+    const percentage = (timestamp - comment.timestamp) / displayMillis;
+    const dx = (canvasWidth + textWidth) * percentage;
+
+    return canvasWidth - dx;
+  };
+
   useEffect(() => {
     const ctx = ref.current?.getContext("2d");
 
@@ -27,11 +41,43 @@ export function useNiconico(): [
       return;
     }
 
+    const { width, height } = ref.current;
+    const maxRows = Math.floor(height / fontSize);
+
     let comments: Comment[] = [];
 
     setSendComment({
       fn: (text: string) => {
-        comments.push({ text, timestamp: Date.now() });
+        const reservedRowNumbers = new Set<number>();
+        const now = Date.now();
+
+        comments.forEach((comment) => {
+          const displayEndTime = comment.timestamp + displayMillis;
+          const x = calcCommentX(ctx, { text, timestamp: now }, displayEndTime);
+
+          if (x < 0) {
+            // case of the comment catches up with previous comment
+            reservedRowNumbers.add(comment.rowNumber);
+            return;
+          }
+
+          const endOfCommentX =
+            calcCommentX(ctx, comment, now) +
+            ctx.measureText(comment.text).width;
+
+          if (endOfCommentX > width) {
+            // case of the end of comment is not displayed
+            reservedRowNumbers.add(comment.rowNumber);
+            return;
+          }
+        });
+
+        for (let rowNumber = 0; rowNumber < maxRows; ++rowNumber) {
+          if (!reservedRowNumbers.has(rowNumber)) {
+            comments.push({ text, timestamp: now, rowNumber });
+            break;
+          }
+        }
       },
     });
 
@@ -42,8 +88,6 @@ export function useNiconico(): [
     ctx.strokeStyle = "#8c8c8c";
     ctx.fillStyle = "#fff";
 
-    const { width, height } = ref.current;
-
     const frame = () => {
       ctx.clearRect(0, 0, width, height);
 
@@ -51,19 +95,16 @@ export function useNiconico(): [
       const now = Date.now();
 
       comments.forEach((comment) => {
-        const canvasWidth = ctx.canvas.width;
+        const x = calcCommentX(ctx, comment, now);
         const textWidth = ctx.measureText(comment.text).width;
-
-        const percentage = (now - comment.timestamp) / displayMillis;
-        const dx = (canvasWidth + textWidth) * percentage;
-        const x = canvasWidth - dx;
 
         if (x + textWidth < 0) {
           return;
         }
 
-        ctx.strokeText(comment.text, x, 0);
-        ctx.fillText(comment.text, x, 0);
+        const y = fontSize * comment.rowNumber;
+        ctx.strokeText(comment.text, x, y);
+        ctx.fillText(comment.text, x, y);
 
         nextComments.push(comment);
       });

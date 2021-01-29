@@ -8,20 +8,16 @@ export const App: React.FC = () => {
   useEffect(() => {
     const handle = setInterval(() => {
       const comments = [
-        "1",
-        "22",
-        "333",
-        "4444",
-        "55555",
-        "666666",
-        "7777777",
-        "88888888",
-        "999999999",
+        "!",
+        "short",
+        "mediummediummedium",
+        "loooooooooooooooooooooooooooong",
       ] as const;
 
       const comment = comments[Math.floor(Math.random() * comments.length)];
       sendComment(comment);
-    }, 400);
+    }, 200);
+
     return () => clearInterval(handle);
   }, [sendComment]);
 
