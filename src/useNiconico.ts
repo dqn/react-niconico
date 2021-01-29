@@ -38,19 +38,21 @@ export function useNiconico(): [
       ctx.clearRect(0, 0, width, height);
 
       ctx.font = `bold 14px sans-serif`;
+      ctx.textBaseline = "top";
 
       const nextComments: Comment[] = [];
       const now = Date.now();
 
       comments.forEach((comment) => {
         const x = width - (now - comment.timestamp) / 10;
+        const textWidth = ctx.measureText(comment.text).width;
 
-        if (x < 0) {
+        if (x + textWidth < 0) {
           return;
         }
 
-        ctx.strokeText(comment.text, x, 14);
-        ctx.fillText(comment.text, x, 14);
+        ctx.strokeText(comment.text, x, 0);
+        ctx.fillText(comment.text, x, 0);
 
         nextComments.push(comment);
       });
