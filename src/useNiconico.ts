@@ -14,8 +14,10 @@ export function useNiconico(): [
   (text: string) => void,
 ] {
   const ref = useRef<null | HTMLCanvasElement>(null);
-  const [sendComments, setSendComments] = useState({
-    fn: (_: string) => {},
+  const [sendComment, setSendComment] = useState({
+    fn: (_: string) => {
+      console.warn("Could not find canvas");
+    },
   });
 
   useEffect(() => {
@@ -27,35 +29,34 @@ export function useNiconico(): [
 
     let comments: Comment[] = [];
 
-    setSendComments({
+    setSendComment({
       fn: (text: string) => {
         comments.push({ text, timestamp: Date.now() });
       },
     });
 
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.lineWidth = lineWidth;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "#8c8c8c";
+    ctx.fillStyle = "#fff";
+
+    const { width, height } = ref.current;
+
     const frame = () => {
-      if (!ref.current) {
-        return requestAnimationFrame(frame);
-      }
-
-      const { width, height } = ref.current;
       ctx.clearRect(0, 0, width, height);
-
-      ctx.font = `bold ${fontSize}px sans-serif`;
-      ctx.lineWidth = lineWidth;
-      ctx.textBaseline = "top";
-      ctx.textAlign = "left";
-      ctx.strokeStyle = "#8c8c8c";
-      ctx.fillStyle = "#fff";
 
       const nextComments: Comment[] = [];
       const now = Date.now();
 
       comments.forEach((comment) => {
+        const canvasWidth = ctx.canvas.width;
         const textWidth = ctx.measureText(comment.text).width;
-        const dx =
-          (width + textWidth) * ((now - comment.timestamp) / displayMillis);
-        const x = width - dx;
+
+        const percentage = (now - comment.timestamp) / displayMillis;
+        const dx = (canvasWidth + textWidth) * percentage;
+        const x = canvasWidth - dx;
 
         if (x + textWidth < 0) {
           return;
@@ -75,7 +76,7 @@ export function useNiconico(): [
     const handle = frame();
 
     return () => cancelAnimationFrame(handle);
-  }, [ref, setSendComments]);
+  }, [ref, setSendComment]);
 
-  return [ref, sendComments.fn];
+  return [ref, sendComment.fn];
 }
