@@ -1,19 +1,27 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 
-const displayMillis = 5_000;
-const fontSize = 36;
-const lineWidth = 4;
-
 type Comment = {
   text: string;
   timestamp: number;
   rowNumber: number;
 };
 
-export function useNiconico(): [
-  MutableRefObject<null | HTMLCanvasElement>,
-  (text: string) => void,
-] {
+export type UseNiconicoOptions = {
+  displayMillis?: number;
+  fontSize?: number;
+  lineWidth?: number;
+};
+
+export function useNiconico(
+  options?: UseNiconicoOptions,
+): [MutableRefObject<null | HTMLCanvasElement>, (text: string) => void] {
+  const { displayMillis, fontSize, lineWidth } = {
+    displayMillis: 5_000,
+    fontSize: 36,
+    lineWidth: 4,
+    ...options,
+  };
+
   const ref = useRef<null | HTMLCanvasElement>(null);
   const [sendComment, setSendComment] = useState({
     fn: (_: string) => {
