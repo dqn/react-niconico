@@ -2,7 +2,9 @@
 
 Overlay text like Niconico.
 
-## Example
+Online demo: https://react-niconico.vercel.app/
+
+## Usage
 
 ```jsx
 import * as React from "react";
@@ -20,6 +22,20 @@ export const App = () => {
   return <canvas ref={ref} width={1200} height={800} />;
 };
 ```
+
+## Options
+
+```ts
+const [ref, emitText] = useNiconico({
+  // options...
+});
+```
+
+| name          | type   | required | description                          | default |
+| ------------- | ------ | -------- | ------------------------------------ | ------- |
+| displayMillis | number | optional | time to display text in milliseconds | 5_000   |
+| fontSize      | number | optional | font size of text                    | 36      |
+| lineWidth     | number | optional | width of the text border             | 4       |
 
 ## License
 
