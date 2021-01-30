@@ -23,7 +23,7 @@ export function useNiconico(
   };
 
   const ref = useRef<null | HTMLCanvasElement>(null);
-  const [sendComment, setSendComment] = useState({
+  const [emitText, setEmitText] = useState({
     fn: (_: string) => {
       console.warn("Could not find canvas");
     },
@@ -54,7 +54,7 @@ export function useNiconico(
 
     let comments: Comment[] = [];
 
-    setSendComment({
+    setEmitText({
       fn: (text: string) => {
         const reservedRowNumbers = new Set<number>();
         const now = Date.now();
@@ -125,7 +125,7 @@ export function useNiconico(
     const handle = frame();
 
     return () => cancelAnimationFrame(handle);
-  }, [ref, setSendComment]);
+  }, [ref, setEmitText]);
 
-  return [ref, sendComment.fn];
+  return [ref, emitText.fn];
 }

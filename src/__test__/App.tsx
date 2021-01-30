@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNiconico } from "../useNiconico";
 
 export const App: React.FC = () => {
-  const [ref, sendComment] = useNiconico();
+  const [ref, emitText] = useNiconico();
 
   useEffect(() => {
     const handle = setInterval(() => {
@@ -15,11 +15,11 @@ export const App: React.FC = () => {
       ] as const;
 
       const comment = comments[Math.floor(Math.random() * comments.length)];
-      sendComment(comment);
+      emitText(comment);
     }, 200);
 
     return () => clearInterval(handle);
-  }, [sendComment]);
+  }, [emitText]);
 
   return (
     <>
