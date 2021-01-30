@@ -19,7 +19,7 @@ export const App = () => {
     emitText("looooooooooooong text");
   }, [emitText]);
 
-  return <canvas ref={ref} width={1200} height={800} />;
+  return <video ref={ref} src="/sample.mp4" />;
 };
 ```
 

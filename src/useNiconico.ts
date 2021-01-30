@@ -1,4 +1,5 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useDimensions } from "./useDimensions";
 
 type Comment = {
   text: string;
@@ -12,9 +13,9 @@ export type UseNiconicoOptions = {
   lineWidth?: number;
 };
 
-export function useNiconico(
+export function useNiconico<T extends HTMLElement>(
   options?: UseNiconicoOptions,
-): [MutableRefObject<null | HTMLCanvasElement>, (text: string) => void] {
+): [MutableRefObject<null | T>, (text: string) => void] {
   const { displayMillis, fontSize, lineWidth } = {
     displayMillis: 5_000,
     fontSize: 36,
@@ -22,7 +23,8 @@ export function useNiconico(
     ...options,
   };
 
-  const ref = useRef<null | HTMLCanvasElement>(null);
+  const ref = useRef<null | T>(null);
+  const { width, height } = useDimensions(ref);
   const [emitText, setEmitText] = useState({
     fn: (_: string) => {
       console.warn("Could not find canvas");
@@ -43,15 +45,14 @@ export function useNiconico(
   };
 
   useEffect(() => {
-    const ctx = ref.current?.getContext("2d");
-
-    if (!ref.current || !ctx) {
+    if (ref.current === null) {
       return;
     }
 
-    const { width, height } = ref.current;
-    const maxRows = Math.floor(height / fontSize);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
 
+    const maxRows = Math.floor(height / fontSize);
     let comments: Comment[] = [];
 
     setEmitText({
@@ -89,6 +90,12 @@ export function useNiconico(
       },
     });
 
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.position = "absolute";
+    canvas.style.top = `${ref.current.offsetTop}px`;
+    canvas.style.left = `${ref.current.offsetLeft}px`;
+
     ctx.font = `bold ${fontSize}px sans-serif`;
     ctx.lineWidth = lineWidth;
     ctx.textBaseline = "top";
@@ -124,8 +131,13 @@ export function useNiconico(
 
     const handle = frame();
 
-    return () => cancelAnimationFrame(handle);
-  }, [displayMillis, fontSize, lineWidth, ref, setEmitText]);
+    ref.current.parentNode?.insertBefore(canvas, ref.current);
+
+    return () => {
+      cancelAnimationFrame(handle);
+      ref.current?.parentElement?.removeChild(canvas);
+    };
+  }, [displayMillis, fontSize, lineWidth, ref, setEmitText, width, height]);
 
   return [ref, emitText.fn];
 }

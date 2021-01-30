@@ -2,8 +2,11 @@ import * as React from "react";
 import { useEffect } from "react";
 import { useNiconico } from "../useNiconico";
 
+const sampleVideoUrl =
+  "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
+
 export const App: React.FC = () => {
-  const [ref, emitText] = useNiconico();
+  const [ref, emitText] = useNiconico<HTMLVideoElement>();
 
   useEffect(() => {
     const handle = setInterval(() => {
@@ -21,9 +24,5 @@ export const App: React.FC = () => {
     return () => clearInterval(handle);
   }, [emitText]);
 
-  return (
-    <>
-      <canvas ref={ref} width={1000} height={500} />
-    </>
-  );
+  return <video ref={ref} src={sampleVideoUrl} autoPlay muted controls loop />;
 };
