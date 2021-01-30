@@ -125,7 +125,7 @@ export function useNiconico(
     const handle = frame();
 
     return () => cancelAnimationFrame(handle);
-  }, [ref, setEmitText]);
+  }, [displayMillis, fontSize, lineWidth, ref, setEmitText]);
 
   return [ref, emitText.fn];
 }
