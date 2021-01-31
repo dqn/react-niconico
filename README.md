@@ -12,7 +12,7 @@ Online demo: https://react-niconico.vercel.app/
 ```jsx
 import * as React from "react";
 import { useEffect } from "react";
-import { useNiconico } from "../useNiconico";
+import { useNiconico } from "react-niconico";
 
 export const App = () => {
   const [ref, emitText] = useNiconico();
