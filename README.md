@@ -7,6 +7,20 @@ Overlay text like Niconico.
 
 Online demo: https://react-niconico.vercel.app/
 
+## Installation
+
+Using yarn:
+
+```bash
+$ yarn add react-niconico
+```
+
+Using npm:
+
+```bash
+$ npm install react-niconico
+```
+
 ## Usage
 
 ```jsx
