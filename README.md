@@ -24,19 +24,22 @@ $ npm install react-niconico
 ## Usage
 
 ```jsx
-import * as React from "react";
 import { useEffect } from "react";
 import { useNiconico } from "react-niconico";
 
 export const App = () => {
   const [ref, emitText] = useNiconico();
 
-  useEffect(() => {
-    emitText("short text");
-    emitText("looooooooooooong text");
-  }, [emitText]);
+  const handleClick = () => {
+    emitText("Hello, World!");
+  };
 
-  return <video ref={ref} src="/sample.mp4" />;
+  return (
+    <div>
+      <video ref={ref} src="/sample.mp4" />
+      <button onClick={handleClick}>Emit comment</button>
+    </div>
+  );
 };
 ```
 
@@ -48,11 +51,11 @@ const [ref, emitText] = useNiconico({
 });
 ```
 
-| name          | type   | required | description                          | default |
-| ------------- | ------ | -------- | ------------------------------------ | ------- |
-| displayMillis | number | optional | time to display text in milliseconds | 5_000   |
-| fontSize      | number | optional | font size of text                    | 36      |
-| lineWidth     | number | optional | width of the text border             | 4       |
+| name          | type   | required | description                          | default        |
+| ------------- | ------ | -------- | ------------------------------------ | -------------- |
+| displayMillis | number | optional | time to display text in milliseconds | 5000           |
+| fontSize      | number | optional | font size of text (px)               | 1/10 of height |
+| borderWidth   | number | optional | width of the border                  | 4              |
 
 ## License
 
