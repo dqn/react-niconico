@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "rm -rf dist && tsc",
     "prepare": "yarn build",
-    "preview": "vite preview"
+    "lint": "run-p lint:*",
+    "lint:tsc": "tsc --noEmit",
+    "lint:eslint": "eslint ./src"
   },
   "dependencies": {
     "react": "^17.0.1"
@@ -17,7 +19,13 @@
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.2",
     "@types/resize-observer-browser": "0.1.5",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
     "@vitejs/plugin-react": "^1.0.7",
+    "eslint": "^8.5.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "npm-run-all": "^4.1.5",
     "prettier": "2.2.1",
     "react-dom": "17.0.1",
     "typescript": "^4.5.4",
