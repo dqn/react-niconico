@@ -1,11 +1,10 @@
-import * as React from "react";
 import { useEffect } from "react";
-import { useNiconico } from "../useNiconico";
+import { useNiconico } from "../src/useNiconico";
 
 const sampleVideoUrl =
   "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
 
-export const App: React.FC = () => {
+export const App: React.VFC = () => {
   const [ref, emitText] = useNiconico<HTMLVideoElement>();
 
   useEffect(() => {
